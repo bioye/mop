@@ -2,6 +2,7 @@ from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 import csv
+from datetime import date
 
 api_id = 3561678
 api_hash = '369f403b32609b76128abdf8453fc9ca'
@@ -49,7 +50,7 @@ all_participants = []
 all_participants = client.get_participants(target_group, aggressive=True)
 
 print('Saving In file...')
-with open("members.csv","w",encoding='UTF-8') as f:
+with open(target_group.title+"-"+date.today().isoformat()+".csv","w",encoding='UTF-8') as f:
     writer = csv.writer(f,delimiter=",",lineterminator="\n")
     writer.writerow(['username','user id', 'access hash','name','group', 'group id'])
     for user in all_participants:
