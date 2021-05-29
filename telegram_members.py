@@ -1,8 +1,10 @@
 from telethon.sync import TelegramClient
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
+from telethon.tl.types import ChatForbidden
 import csv
 from datetime import date
+from collections import OrderedDict
 
 api_id = 3561678
 api_hash = '369f403b32609b76128abdf8453fc9ca'
@@ -18,6 +20,7 @@ if not client.is_user_authorized():
 chats = []
 last_date = None
 chunk_size = 200
+group_dict = {}
 groups = []
 
 result = client(GetDialogsRequest(
@@ -29,13 +32,21 @@ result = client(GetDialogsRequest(
 ))
 chats.extend(result.chats)
 
+print("chat count:" + str(len(chats)))
+
 for chat in chats:
     try:
-        if chat.megagroup == True:
-            groups.append(chat)
+        if isinstance(chat, (ChatForbidden)):
+            continue
+        elif "MOP" in chat.title or "NIGERIA WE MOVE" in chat.title or "Novel Nigeria Crusaders Initiative" in chat.title or "Naija Resistance Movement (NRM)" in chat.title:
+            group_dict[chat.title] = chat
     except:
         continue
 
+groups = list(group_dict.values())
+groups = sorted(groups, key=lambda group:group.title)
+
+print("group count:" + str(len(groups)))
 print('Choose a group to scrape members from:')
 i = 0
 for g in groups:
